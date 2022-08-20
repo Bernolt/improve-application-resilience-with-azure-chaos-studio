@@ -1,1 +1,1 @@
-# improve-application-resilience-with-azure-chaos-studio
+# Improve application resilience with Azure Chaos Studio

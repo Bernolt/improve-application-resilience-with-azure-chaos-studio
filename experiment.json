@@ -1,0 +1,74 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the resource being enabled."
+            }
+        },
+        "clusterName": {
+            "type": "string",
+            "metadata": {
+              "description": "The name of the AKS cluster the experiment is being targeted."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+              "description": "Location"
+            }
+        } 
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Chaos/experiments",
+            "apiVersion": "2021-09-15-preview",
+            "name": "[parameters('resourceName')]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "selectors": [
+                    {
+                        "type": "List",
+                        "targets": [
+                            {
+                                "id": "[resourceId('Microsoft.ContainerService/managedCluster', parameters('clusterName'))]"
+                            }
+                        ],
+                        "id": "[resourceId('Microsoft.ContainerService/managedCluster', parameters('clusterName'))]"
+                    }
+                ],
+                "steps": [
+                    {
+                        "name": "Default Step",
+                        "branches": [
+                            {
+                                "name": "Default Branch",
+                                "actions": [
+                                    {
+                                        "parameters": [
+                                            {
+                                                "key": "jsonSpec",
+                                                "value": "{\"action\":\"pod-failure\",\"mode\":\"one\",\"duration\":\"600s\",\"selector\":{\"namespaces\":[\"default\"],\"labelSelectors\":{\"app\":\"azure-vote-front\"}}}"
+                                            }
+                                        ],
+                                        "duration": "PT10M",
+                                        "name": "urn:csci:microsoft:azureKubernetesServiceChaosMesh:podChaos/2.1",
+                                        "type": "continuous",
+                                        "displayName": "AKS Chaos Mesh Pod Chaos",
+                                        "selectorId": "[resourceId('Microsoft.ContainerService/managedCluster', 'parameter('clusterName'))"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

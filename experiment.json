@@ -24,7 +24,11 @@
         "chaosTargetResource": {
             "type": "string",
             "defaultValue": "[concat(resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName')), '/providers/Microsoft.Chaos/targets/Microsoft-AzureKubernetesServiceChaosMesh')]"
-        } 
+        },
+        "selectorId": {
+            "type": "string",
+            "defaultValue": "Selector1"
+        }
     },
     "resources": [
         {
@@ -38,11 +42,11 @@
             "properties": {
                 "selectors": [
                     {
-                        "id": "[resourceId('Microsoft.ContainerService/managedCluster', 'parameter('clusterName'))", 
+                        "id": "Selector1", 
                         "type": "List",
                         "targets": [
                             {
-                                "type": "microsoft.chaos/targets",
+                                "type": "ChaosTarget",
                                 "id": "[parameters('chaosTargetResource')]"
                             }
                         ]
@@ -50,23 +54,23 @@
                 ],
                 "steps": [
                     {
-                        "name": "Default Step",
+                        "name": "Pod Fault",
                         "branches": [
                             {
-                                "name": "Default Branch",
+                                "name": "AKS Cluster",
                                 "actions": [
                                     {
                                         "parameters": [
                                             {
                                                 "key": "jsonSpec",
-                                                "value": "{\"action\":\"pod-failure\",\"mode\":\"one\",\"duration\":\"600s\",\"selector\":{\"namespaces\":[\"default\"],\"labelSelectors\":{\"app\":\"azure-vote-front\"}}}"
+                                                "value": "{\"action\":\"pod-failure\",\"mode\":\"all\",\"duration\":\"600s\",\"selector\":{\"namespaces\":[\"default\"]}}"
                                             }
                                         ],
                                         "duration": "PT10M",
                                         "name": "urn:csci:microsoft:azureKubernetesServiceChaosMesh:podChaos/2.1",
                                         "type": "continuous",
                                         "displayName": "AKS Chaos Mesh Pod Chaos",
-                                        "selectorId": "[resourceId('Microsoft.ContainerService/managedCluster', 'parameter('clusterName'))"
+                                        "selectorId": "Selector1"
                                     }
                                 ]
                             }

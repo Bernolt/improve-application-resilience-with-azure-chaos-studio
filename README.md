@@ -197,4 +197,43 @@ az deployment group create \
 
 To validate that the onboarding was successful, navigate to [Azure Chaos Studio Targets in the Azure Portal](https://portal.azure.com/#view/Microsoft_Azure_Chaos/ChaosStudioMenuBlade/~/targetsManagement), and see if your AKS cluster has service-direct option enabled. 
 
+## Create an Azure Chaos Studio experiment
 
+**Step 1:** Add the environment variables, using your terminal from the previous steps. You can use the commands below and adjust them to your liking.
+
+```
+$EXPERIMENT_NAME="exp-t-aks-weu-chaos-pod-robino-01"
+$DEPLOYMENT_NAME="ExperimentDeploymentRobino-01"
+```
+
+**Step 2:** Run the following code to deploy the chaos experiment. The deployment should complete in a matter of seconds. 
+
+```
+az deployment group create \
+  --name $DEPLOYMENT_NAME \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --template-file "./experiment.json" \
+  --parameters resourceName=$EXPERIMENT_NAME location=$LOCATION clusterName=$AKS_NAME
+```
+
+You have now successfully deployed your chaos experiment. If you like, you can review your chaos experiment in the Azure Portal, before going to the next step.
+
+**Step 4:** In order to run the experiment, an experiment needs permissions to a resource. More information about the required permissions can be found in the documentation. Run the command below to retrieve the experiments ID, so we can use it for assigning the required permissions in the next step.
+
+```
+az ad sp list \
+  --display-name $EXPERIMENT_NAME \
+  --query [].id --output table
+```
+
+**Step 5:** Run the command below to give your experiment the Azure Kubernetes Service Cluster Admin Role on your resource group. Make sure you adjust the principal ID before executing the command.
+
+```
+az role assignment create \
+  --assignee "<principalId>" \
+  --role "Azure Kubernetes Service Cluster Admin Role" \
+  --resource-group $RESOURCE_GROUP_NAME
+```
+
+## You're done!
+We're finally ready to run our freshly created chaos experiment.

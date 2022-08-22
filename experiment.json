@@ -20,6 +20,10 @@
             "metadata": {
               "description": "Location"
             }
+        },
+        "chaosTargetResource": {
+            "type": "string",
+            "defaultValue": "[concat(resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName')), '/providers/Microsoft.Chaos/targets/Microsoft-AzureKubernetesServiceChaosMesh')]"
         } 
     },
     "resources": [
@@ -34,13 +38,14 @@
             "properties": {
                 "selectors": [
                     {
+                        "id": "[resourceId('Microsoft.ContainerService/managedCluster', 'parameter('clusterName'))", 
                         "type": "List",
                         "targets": [
                             {
-                                "id": "[resourceId('Microsoft.ContainerService/managedCluster', parameters('clusterName'))]"
+                                "type": "microsoft.chaos/targets",
+                                "id": "[parameters('chaosTargetResource')]"
                             }
-                        ],
-                        "id": "[resourceId('Microsoft.ContainerService/managedCluster', parameters('clusterName'))]"
+                        ]
                     }
                 ],
                 "steps": [

@@ -1,6 +1,10 @@
 # Improve application resilience with Azure Chaos Studio
 
 Let's deploy a simple Azure Kubernetes Services cluster and a simple app to run a chaos experiment against, so you can familiarize yourself with Azure Chaos Studio.
+But Before you can start deploying, there are some prerequisites to fulfill:
+* You'll need the Azure command-line interface for deploying the resources, and you can find more information about the Azure CLI in the [documentation](https://docs.microsoft.com/en-us/cli/azure/).
+* You'll need the Kubernetes command-line tool for deploying images and run other commands against your Kubernetes cluster. You can find more information about kubectl in the [documentation](https://kubernetes.io/docs/reference/kubectl/kubectl/).
+* You'll need the Helm command-line tool for the deployment and configuration of applications and services. You can find more information about helm in the [documentation](https://helm.sh/docs/intro/install/).
 
 This repository is part of the [Improve application resilience with Azure Chaos Studio](#) blog post.
 

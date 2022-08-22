@@ -149,3 +149,52 @@ kubectl get service
 ```
 
 Copy the EXTERNAL_IP of the azure-vote-front service, and paste it in your browser. Congratulations, you've now successfully deployed your Azure Voting App.
+
+## Set up Chaos Mesh on your AKS cluster
+
+**Step 1:** Our first step will be adding a new chart repository for chaos-mesh, and making sure we have the latest update. Run the commands below to add the repository.
+
+```
+helm repo add chaos-mesh https://charts.chaos-mesh.org
+helm repo update
+```
+
+**Step 2:** To create a new scope for our chaos mesh pods, services, and deployments in the cluster, we'll create a separate namespace for chaos mesh. Run the command below to create the namespace.
+
+```
+kubectl create ns chaos-testing
+```
+
+**Step 3:** Next, we'll install chaos mesh into the freshly created namespace. Don't mind the flags in the command below. We won't be covering the details in this post, but you won't have to adjust them. Run the command below to install chaos mesh to your AKS cluster.
+
+```
+helm install chaos-mesh chaos-mesh/chaos-mesh --namespace=chaos-testing --set chaosDaemon.runtime=containerd --set chaosDaemon.socketPath=/run/containerd/containerd.sock
+```
+
+The installation will create multiple pods and services. Before continuing, validate that all pods are running, using the command below.
+
+```
+kubectl get pods -n chaos-testing
+```
+
+If everything went as intended, you have now successfully installed chaos mesh to your AKS cluster. 
+
+## Onboard the AKS cluster to Azure Chaos Studio
+
+Run the command below to onboard the AKS cluster to Azure Chaos Studio, while making sure you have the folder that holds the template as your working directory.
+
+```
+$DEPLOYMENT_NAME="OnboardDeploymentRobino-01"
+```
+
+```
+az deployment group create \
+  --name $DEPLOYMENT_NAME \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --template-file "./onboard.json" \
+  --parameters resourceName=$AKS_NAME resourceGroup=$RESOURCE_GROUP_NAME
+```
+
+To validate that the onboarding was successful, navigate to [Azure Chaos Studio Targets in the Azure Portal](https://portal.azure.com/#view/Microsoft_Azure_Chaos/ChaosStudioMenuBlade/~/targetsManagement), and see if your AKS cluster has service-direct option enabled. 
+
+

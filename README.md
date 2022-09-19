@@ -30,7 +30,7 @@ az account list --output table
 az account set --subscription <subscriptionID>
 ```
 
-*Step 5:* Set your environment variables and create a resource group. 
+**Step 5:** Set your environment variables and create a resource group. 
 
 ```$RESOURCE_GROUP_NAME="rg-t-aks-weu-chaos-robino-01"
 $AKS_NAME="aks-t-weu-chaos-robino-01"
@@ -46,7 +46,7 @@ az group create \
   --location "$LOCATION"
 ```
 
-*Step 6:* Set the folder you've downloaded the ARM templates as your working directory and run the following code to deploy the cluster. Wait for the deployment to finish. This may take a couple of minutes.
+**Step 6:** Set the folder you've downloaded the ARM templates as your working directory and run the following code to deploy the cluster. Wait for the deployment to finish. This may take a couple of minutes.
 
 ```
 az deployment group create \
